@@ -8,6 +8,7 @@ router.post('/', async (req, res) => {
     const product = req.body; // expects: name, category, material, etc.
     let score = calculateScore(product);
     const carbon = await getCarbonFootprint(product);
+    console.log(carbon);
     // Adjust score by carbon footprint
     score = adjustScoreByCarbon(score, product.category, carbon);
     res.json({

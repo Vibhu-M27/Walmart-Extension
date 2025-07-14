@@ -363,69 +363,6 @@ function extractProductData() {
     }
   }
 
-  // --- Material Extraction ---
-  let material = 'Unknown';
-  // Try common selectors for product details/specs
-  const materialSelectors = [
-    '[data-testid="product-details"]',
-    '[data-automation-id="product-details"]',
-    '.ProductDetails',
-    '.product-details',
-    '.about-desc',
-    '.specs',
-    '.product-specs',
-    '.ProductSpecs',
-    '.product-specification',
-    '.ProductSpecification',
-    'table',
-    'section',
-    'ul',
-    'dl'
-  ];
-  for (let selector of materialSelectors) {
-    const elements = document.querySelectorAll(selector);
-    for (let el of elements) {
-      const text = el.textContent;
-      if (text && /material|fabric|composition|shell|lining/i.test(text)) {
-        // Try to extract the material value
-        const match = text.match(/(?:material|fabric|composition|shell|lining)[^:]*[:\-\s]+([A-Za-z0-9, %]+)/i);
-        if (match && match[1]) {
-          material = match[1].trim();
-          break;
-        }
-        // Try to find a <td> or <li> with material
-        const detailCells = el.querySelectorAll('td, li, dd');
-        for (let cell of detailCells) {
-          if (/material|fabric|composition|shell|lining/i.test(cell.textContent)) {
-            // Look for the next sibling or the text after colon
-            let value = '';
-            if (cell.nextElementSibling) {
-              value = cell.nextElementSibling.textContent.trim();
-            } else {
-              const colonIdx = cell.textContent.indexOf(':');
-              if (colonIdx !== -1) {
-                value = cell.textContent.slice(colonIdx + 1).trim();
-              }
-            }
-            if (value) {
-              material = value;
-              break;
-            }
-          }
-        }
-      }
-      if (material !== 'Unknown') break;
-    }
-    if (material !== 'Unknown') break;
-  }
-  // Fallback: look for material in description
-  if (material === 'Unknown' && description && /material|fabric|composition|shell|lining/i.test(description)) {
-    const match = description.match(/(?:material|fabric|composition|shell|lining)[^:]*[:\-\s]+([A-Za-z0-9, %]+)/i);
-    if (match && match[1]) {
-      material = match[1].trim();
-    }
-  }
-
   // Additional data extraction
   const productUrl = window.location.href;
 
@@ -435,14 +372,13 @@ function extractProductData() {
   category = category.replace(/\s+/g, ' ').trim();
   description = description.replace(/\s+/g, ' ').trim();
 
-  console.log('Extracted data:', { name, price, category, description, material, imageUrl, productUrl });
+  console.log('Extracted data:', { name, price, category, description, imageUrl, productUrl });
 
   return { 
     name, 
     price, 
     category, 
     description, 
-    material,
     imageUrl, 
     productUrl,
     scrapedAt: new Date().toISOString()
@@ -473,58 +409,6 @@ async function sendToBackend(data) {
   }
 }
 
-// Send product data to products-list for My Products tab
-async function saveProductToBackend(productData) {
-  try {
-    await fetch('http://localhost:3000/api/products-list', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(productData)
-    });
-    console.log('Product saved to backend /api/products-list');
-  } catch (err) {
-    console.error('Failed to save product to backend:', err);
-  }
-}
-
-// Add this function to calculate and save score
-async function calculateAndSaveScore(productData) {
-  try {
-    const response = await fetch('http://localhost:3000/score', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(productData)
-    });
-    if (!response.ok) throw new Error('Failed to calculate score');
-    const result = await response.json();
-    // Save to localStorage as in frontend scoring page
-    const savedScores = JSON.parse(localStorage.getItem('savedScores') || '[]');
-    const scoreToSave = {
-      ...productData,
-      score: result.sustainabilityScore,
-      carbonFootprint: result.carbonFootprint,
-      timestamp: new Date().toISOString(),
-      productName: productData.name || 'Unknown Product'
-    };
-    savedScores.push(scoreToSave);
-    localStorage.setItem('savedScores', JSON.stringify(savedScores));
-    console.log('Score and carbon footprint saved to localStorage:', scoreToSave);
-    // Also send to backend scores API
-    try {
-      await fetch('http://localhost:3000/api/scores', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(scoreToSave)
-      });
-      console.log('Score also saved to backend /api/scores');
-    } catch (err) {
-      console.error('Failed to save score to backend:', err);
-    }
-  } catch (error) {
-    console.error('Error calculating/saving score:', error);
-  }
-}
-
 // Send data to popup when requested
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'getProductData') {
@@ -552,6 +436,4 @@ console.log('Content script: Loaded on', window.location.href);
 const data = extractProductData();
 console.log('Content script: Auto-extracted data:', data);
 sendToBackend(data);
-saveProductToBackend(data);
-calculateAndSaveScore(data);
 chrome.runtime.sendMessage({ type: 'productData', data });

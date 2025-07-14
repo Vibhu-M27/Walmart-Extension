@@ -2,8 +2,7 @@ function extractProductData() {
   const name = document.querySelector('h1[itemprop="name"]')?.textContent.trim() ||
                document.querySelector('.w_DN')?.textContent.trim() ||
                'Unknown';
-  const price = document.querySelector('[data-automation-id="sale-price"]')?.textContent.trim() ||
-                document.querySelector('.price-group')?.textContent.trim() ||
+  const price = document.querySelector('data-seo-id="hero-price"')?.textContent.trim() ||
                 'Unknown';
   const categoryElements = document.querySelectorAll('[data-automation-id="breadcrumb-item"]');
   const category = Array.from(categoryElements).map(el => el.textContent.trim()).join(' > ') || 'Unknown';

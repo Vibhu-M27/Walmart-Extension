@@ -284,12 +284,19 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Fetch latest score from backend
     let latestScore = null;
     try {
+        const response1 = await fetch('/api/scores/update-carbon-footprints', {
+            method: 'POST'
+          });
+          const result = await response1.json();
+          console.log(result);
         const response = await fetch('/api/scores');
         if (response.ok) {
             const scores = await response.json();
+            console.log(scores);
             if (scores.length > 0) {
                 // Sort by timestamp descending
                 latestScore = scores.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0];
+                console.log(latestScore);
             }
         }
     } catch (err) {
