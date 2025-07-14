@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Walmart Product Scraper</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-100 p-4 w-96">
+  <h1 class="text-2xl font-bold mb-4 text-center text-blue-600">Walmart Product Scraper</h1>
+  
+  <div id="product-info" class="bg-white p-4 rounded shadow mb-4">
+    <div class="mb-3">
+      <label class="text-sm font-medium text-gray-700">Product Name:</label>
+      <p id="product-name" class="font-semibold text-gray-900">Loading...</p>
+    </div>
+    
+    <div class="mb-3">
+      <label class="text-sm font-medium text-gray-700">Price:</label>
+      <p id="product-price" class="text-green-600 font-semibold">Loading...</p>
+    </div>
+    
+    <div class="mb-3">
+      <label class="text-sm font-medium text-gray-700">Category:</label>
+      <p id="product-category" class="text-gray-900">Loading...</p>
+    </div>
+    
+    <div class="mb-3">
+      <label class="text-sm font-medium text-gray-700">Description:</label>
+      <p id="product-description" class="text-gray-900 text-sm">Loading...</p>
+    </div>
+    
+    <div id="product-image" class="mb-3" style="display: none;">
+      <label class="text-sm font-medium text-gray-700">Image:</label>
+      <img id="product-image-url" class="w-full h-32 object-cover rounded mt-1" alt="Product">
+    </div>
+  </div>
+  
+  <div id="status" class="bg-blue-50 p-3 rounded text-sm text-blue-800 mb-4">
+    <p id="status-message">Ready to scrape product data...</p>
+  </div>
+  
+  <div class="flex space-x-2 mb-2">
+    <button id="refresh-btn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex-1">
+      Refresh Data
+    </button>
+    <button id="view-frontend-btn" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex-1">
+      View in App
+    </button>
+  </div>
+  
+  <div class="flex space-x-2">
+    <button id="debug-btn" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 flex-1">
+      Debug Page
+    </button>
+    <button id="help-btn" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 flex-1">
+      Help
+    </button>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

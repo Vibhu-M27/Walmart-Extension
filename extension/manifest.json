@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Walmart Product Scraper",
+  "version": "1.0",
+  "description": "Extracts product details from Walmart.com product pages.",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://www.walmart.com/*",
+    "http://localhost/*",
+    "https://localhost/*"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.walmart.com/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
